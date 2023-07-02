@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload Functionality</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-container {
+            width: 150px; /* Set the desired width */
+            height: 150px; /* Set the desired height */
+            border-radius: 50%; /* Create a circular shape */
+            overflow: hidden; /* Hide any overflow outside the circle */
+            background-color: #f1f1f1; /* Set a background color for the circle */
+            display: flex; /* Align image vertically and horizontally */
+            justify-content: center; /* Horizontally center the image */
+            align-items: center; /* Vertically center the image */
+            position: relative;
+        }
+
+        .image-container img {
+            max-width: 100%; /* Ensure the image does not exceed container width */
+            max-height: 100%; /* Ensure the image does not exceed container height */
+            border-radius: 50%; /* Maintain circular shape for the image */
+        }
+        
+        .image-container:hover .upload-text {
+            opacity: 1;
+        }
+
+        .upload-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            opacity: 0;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        #button2 {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Update Resume</h2>
+        <form method="post" enctype="multipart/form-data" id="profile-pic-form">
+        {% load static %}
+        {{ form }}
+        {% csrf_token %}
+        <div class="image-container">
+            <img src="{% static 'pp-actor.jpg' %}" alt="Your Image">
+            <div class="upload-text" onclick="openFileDialog()">Upload</div>
+        </div>
+        <input type="file" id="file-input" style="display: none;" accept="image/*" onchange="checkFileName(event)">
+        
+        <script>
+            function openFileDialog() {
+                document.getElementById('file-input').click();
+            }
+
+            function checkFileName(event) {
+                const name = event.target.files[0]
+                console.log(name)
+            }
+        </script>
+        </form>
+
+        <div class="resume-container">
+            <p><i>Click here to <a href="">view</a> your resume </i></p>
+            <label for="file-input" id="button2">Upload Resume</label>
+        </div>
+    </div>
+</body>
+</html>
