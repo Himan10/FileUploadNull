@@ -32,9 +32,8 @@
         }
 
         .image-container img {
-            max-width: 100%; /* Ensure the image does not exceed container width */
-            max-height: 100%; /* Ensure the image does not exceed container height */
-            border-radius: 50%; /* Maintain circular shape for the image */
+            width: 150px; /* Set the desired width */
+            height: 150px; /* Set the desired height */
         }
         
         .image-container:hover .upload-text {
@@ -84,30 +83,95 @@
     <div class="container">
         <h2>Update Resume</h2>
         <form method="post" enctype="multipart/form-data" id="profile-pic-form">
-        {% load static %}
-        {{ form }}
-        {% csrf_token %}
-        <div class="image-container">
-            <img src="{% static 'pp-actor.jpg' %}" alt="Your Image">
-            <div class="upload-text" onclick="openFileDialog()">Upload</div>
-        </div>
-        <input type="file" id="file-input" style="display: none;" accept="image/*" onchange="checkFileName(event)">
-        
-        <script>
-            function openFileDialog() {
-                document.getElementById('file-input').click();
-            }
+            {% load static %}
+            {{ form }}
+            {% csrf_token %}
+            <div class="image-container">
+                <img src="{{ img }}" alt="Your Image">
+                <div class="upload-text" onclick="openFileDialog()">Upload</div>
+            </div>
+            <input type="file" id="file-input" style="display: none;" accept="image/*" onchange="uploadFile(event, '/fileUploadFunctionality/update/')">
+            <script>
+                function getOriginAddress() {
+                    const url = window.location.href;
+                    return new URL(url).origin;
+                }
 
-            function checkFileName(event) {
-                const name = event.target.files[0]
-                console.log(name)
-            }
-        </script>
+                function openFileDialog() {
+                    document.getElementById('file-input').click();
+                }
+    
+                function uploadFile(event, path) {
+                    const file = event.target.files[0];
+                    console.log(file)
+                    var reload=false
+                    const formData = new FormData();
+                    if (["image/jpeg", "image/png"].includes(file.type)) {
+                        formData.append('profile_picture', file);
+                        reload=true
+                    } else if (file.type == "application/pdf") {
+                        formData.append("resume", file);
+                    }
+    
+                    const xhr = new XMLHttpRequest();
+                    const address = getOriginAddress() + path;
+                    xhr.open('POST', address);
+                    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 200) {
+                                console.log(xhr.responseText);  // Response from the server
+                                console.log(reload)
+                                if (reload) {
+                                    window.location.reload();
+                                }
+                            } else {
+                                console.error('Error:', xhr.status);
+                            }
+                        }
+                    };
+                    xhr.send(formData);
+                }
+            </script>
         </form>
-
         <div class="resume-container">
-            <p><i>Click here to <a href="">view</a> your resume </i></p>
-            <label for="file-input" id="button2">Upload Resume</label>
+            <!-- Add a link/button to trigger the modal -->
+            <p id="resume-get-text"><i>Click here to <a href="#" onclick=fetchResume(event)>view</a> your resume</i></p>
+            <script>
+                function fetchResume(event) {
+                    event.preventDefault(); // Prevent the default link behavior
+
+                    // Make an AJAX request to fetch the resume file path
+                    var xhr = new XMLHttpRequest();
+                    var origin = new URL(window.location.href).origin
+                    var path  = "/fileUploadFunctionality/fetch-resume"
+                    xhr.open("GET", origin+path, true);
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            var resumeFilePath = xhr.responseText;
+                            console.log(resumeFilePath)
+                            if (resumeFilePath) {
+                                openResumeInNewTab(origin + resumeFilePath); // Call the function to open the resume in a new tab
+                            } else {
+                                const i1 = document.createElement('i')
+                                i1.textContent = "No Resume Uploaded Yet"
+                                document.getElementById("resume-get-text").innerHTML + "<br>" + i1
+                            }
+                        }
+                    };
+                    xhr.send();
+                }
+
+                function openResumeInNewTab(resumeFilePath) {
+                    window.open(resumeFilePath, "_blank");
+                }
+            </script>
+            <form method="post" enctype="multipart/form-data" id="resume-upload-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <label for="resume-input" id="button2">Upload Resume</label>
+            <input type="file" id="resume-input" style="display: none;" accept=".pdf" onchange="uploadFile(event, '/fileUploadFunctionality/resume-upload/')">
+            </form>
         </div>
     </div>
 </body>

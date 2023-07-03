@@ -4,8 +4,12 @@
 
 from django.urls import path
 from . import views
+from .views import checkAuthentication
 
 # URLConf
 urlpatterns = [
-    path('main/', views.main)
+    path('main/', views.main, name="main"),
+    path('update/', views.upload_image, name='uploadImage'),
+    path('resume-upload/', views.upload_file, name="uploadFile"),
+    path('fetch-resume/', views.fetch_resume, name="viewResume")
 ]
