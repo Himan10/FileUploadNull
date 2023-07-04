@@ -6,7 +6,7 @@ from os.path import join
 
 # Create your models here.
 def defaultImagePath():
-    return 'media/pp-armor.jpg'
+    return 'pp-armor.jpg'
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
