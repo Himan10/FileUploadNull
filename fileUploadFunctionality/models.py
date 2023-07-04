@@ -20,4 +20,4 @@ class UserProfile(models.Model):
             self.resume_file_path = self.resume.path
         else:
             self.resume_file_path = ""
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs) 
