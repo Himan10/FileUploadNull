@@ -88,8 +88,7 @@ def upload_file(request):
                             default_storage.delete(user_profile.resume.path)
                         user_profile.resume = resume
                         user_profile.save()
-    user_profile.context = context
-    return redirect("main")
+    return render(request, "main.html", {"context" : context})
 
 def fetch_resume(request):
     UserData = UserProfile.objects.get(user=request.user)

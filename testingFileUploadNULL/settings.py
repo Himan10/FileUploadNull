@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fileUploadFunctionality'
+    'fileUploadFunctionality',
+    'rest_framework',
+    "helloAPI",
+    "django_filters"
 ]
 
 MIDDLEWARE = [
